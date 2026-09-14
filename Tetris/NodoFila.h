@@ -5,10 +5,10 @@
 
 struct NodoFila {
 private:
-    int celdas[Tablero::COLUMNAS]; // 0: vacia; 1 a 7: tipo de bloque.
+    int celdas[Tablero::COLUMNAS]; 
     NodoFila* siguiente;
 
-    friend class Tablero;
+    friend class Tablero; // esto es para poder acceder a los metodos privados de tablero
 
 public:
     NodoFila() : celdas{}, siguiente(nullptr) {}
