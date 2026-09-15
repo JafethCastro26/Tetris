@@ -26,6 +26,19 @@ bool Tablero::posicionValida(int fila, int columna)  {
     return fila >= 0 && fila < FILAS && columna >= 0 && columna < COLUMNAS;
 }
 
+bool Tablero::puedeColocar(Pieza pieza) {
+    for (int i = 0; i < Pieza::BLOQUES; ++i) {
+        nodoBloque bloque = pieza.getBloque(i);
+        if (!posicionValida(bloque.fila, bloque.columna)) {
+            return false;
+        }
+        if (getCelda(bloque.fila, bloque.columna) != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 NodoFila* Tablero::buscarFila(int fila)  {
     NodoFila* actual = primera;
     for (int i = 0; i < fila && actual != nullptr; ++i)

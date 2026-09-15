@@ -1,6 +1,8 @@
 #ifndef TABLERO_H
 #define TABLERO_H
 
+#include "Pieza.h"
+
 struct NodoFila;
 
 class Tablero {
@@ -15,6 +17,7 @@ public:
     ~Tablero();
 
     bool posicionValida(int fila, int columna);
+    bool puedeColocar(Pieza pieza);
     int getCelda(int fila, int columna);
     bool setCelda(int fila, int columna, int valor);
     int eliminarFilasCompletas();

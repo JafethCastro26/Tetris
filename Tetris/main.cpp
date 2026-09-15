@@ -13,10 +13,60 @@ int main() {
 
     Tablero tablero;
     Pieza pieza(Pieza::T, 0, 3);
+    float tiempoCaida = 0.0f;
+    const float intervaloNormal = 0.5f;
+    const float intervaloRapido = 0.05f;
     InitWindow(620, 680, "Tetris - Tablero");
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
+        if (IsKeyPressed(KEY_LEFT)) {
+            Pieza candidata = pieza;
+            candidata.mover(0, -1);
+            if (tablero.puedeColocar(candidata)) {
+                pieza = candidata;
+            }
+        }
+
+        if (IsKeyPressed(KEY_RIGHT)) {
+            Pieza candidata = pieza;
+            candidata.mover(0, 1);
+            if (tablero.puedeColocar(candidata)) {
+                pieza = candidata;
+            }
+        }
+
+        if (IsKeyPressed(KEY_UP)) {
+            Pieza candidata = pieza;
+            candidata.rotar();
+            if (tablero.puedeColocar(candidata)) {
+                pieza = candidata;
+            }
+        }
+
+        float intervaloCaida = intervaloNormal;
+        if (IsKeyDown(KEY_DOWN)) {
+            intervaloCaida = intervaloRapido;
+        }
+
+        // Reiniciar al cambiar de velocidad para no acumular bajadas repentinas.
+        if (IsKeyPressed(KEY_DOWN) || IsKeyReleased(KEY_DOWN)) {
+            tiempoCaida = 0.0f;
+        }
+        tiempoCaida += GetFrameTime();
+
+        while (tiempoCaida >= intervaloCaida) {
+            tiempoCaida -= intervaloCaida;
+            Pieza candidata = pieza;
+            candidata.mover(1, 0);
+            if (tablero.puedeColocar(candidata)) {
+                pieza = candidata;
+            } else {
+                tiempoCaida = 0.0f;
+                break;
+            }
+        }
+
         BeginDrawing();
         ClearBackground(Color{13, 18, 29, 255});
         DrawText("TETRIS", origenX, 24, 30, RAYWHITE);
@@ -44,6 +94,9 @@ int main() {
         DrawText("TABLERO", 355, 80, 22, RAYWHITE);
         DrawText("10 columnas x 20 filas", 355, 115, 16, LIGHTGRAY);
         DrawText("ESC: salir", 355, 590, 18, LIGHTGRAY);
+        DrawText("Flechas: mover izq/der", 355, 560, 16, LIGHTGRAY);
+        DrawText("Arriba: rotar", 355, 530, 16, LIGHTGRAY);
+        DrawText("Mantener abajo: acelerar", 355, 500, 16, LIGHTGRAY);
         EndDrawing();
     }
     CloseWindow();
