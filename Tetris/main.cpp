@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "Tablero.h"
+#include "Pieza.h"
 
 int main() {
     const int tamanoCelda = 28;
@@ -11,6 +12,7 @@ int main() {
     };
 
     Tablero tablero;
+    Pieza pieza(Pieza::T, 0, 3);
     InitWindow(620, 680, "Tetris - Tablero");
     SetTargetFPS(60);
 
@@ -23,12 +25,21 @@ int main() {
             for (int columna = 0; columna < Tablero::COLUMNAS; ++columna) {
                 const int x = origenX + columna * tamanoCelda;
                 const int y = origenY + fila * tamanoCelda;
-                const int valor = tablero.obtenerCelda(fila, columna);
+                const int valor = tablero.getCelda(fila, columna);
                 DrawRectangle(x, y, tamanoCelda - 1, tamanoCelda - 1, colores[valor]);
             }
         }
+        // Dibujar la pieza activa sobre las celdas del tablero.
+        for (int i = 0; i < Pieza::BLOQUES; ++i) {
+            nodoBloque bloque = pieza.getBloque(i);
+            int x = origenX + bloque.columna * tamanoCelda;
+            int y = origenY + bloque.fila * tamanoCelda;
+            DrawRectangle(x, y, tamanoCelda - 1, tamanoCelda - 1,
+                          colores[pieza.getTipo()]);
+        }
+
         DrawRectangleLines(origenX - 1, origenY - 1,
-                           Tablero::COLUMNAS * tamanoCelda + 1,
+						   Tablero::COLUMNAS * tamanoCelda + 1,
                            Tablero::FILAS * tamanoCelda + 1, GRAY);
         DrawText("TABLERO", 355, 80, 22, RAYWHITE);
         DrawText("10 columnas x 20 filas", 355, 115, 16, LIGHTGRAY);

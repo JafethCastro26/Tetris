@@ -1,11 +1,12 @@
 #include "Tablero.h"
 #include "NodoFila.h"
 
-Tablero::Tablero() : primera(nullptr) {
+Tablero::Tablero() {
+        this->primera = nullptr;
         for (int i = 0; i < FILAS; ++i) {
             NodoFila* nueva = new NodoFila;
-            nueva->siguiente = primera;
-            primera = nueva;
+            nueva->siguiente = this->primera;
+            this->primera = nueva;
         }
 }
 
@@ -32,12 +33,12 @@ NodoFila* Tablero::buscarFila(int fila)  {
     return actual;
 }
 
-int Tablero::obtenerCelda(int fila, int columna)  {
+int Tablero::getCelda(int fila, int columna)  {
     if (!posicionValida(fila, columna)) return -1; // -1 si la posicion esta fuera del tablero
     return buscarFila(fila)->celdas[columna];
 }
 
-bool Tablero::establecerCelda(int fila, int columna, int valor) {
+bool Tablero::setCelda(int fila, int columna, int valor) {
     if (!posicionValida(fila, columna) || valor < 0 || valor > 7) return false;
     buscarFila(fila)->celdas[columna] = valor;
     return true;

@@ -8,10 +8,15 @@ private:
     int celdas[Tablero::COLUMNAS]; 
     NodoFila* siguiente;
 
-    friend class Tablero; // esto es para poder acceder a los metodos privados de tablero
+    friend class Tablero; // esto es para que nodoFila pueda acceder a los metodos de tablero
 
 public:
-    NodoFila() : celdas{}, siguiente(nullptr) {}
+    NodoFila() {
+        for (int columna = 0; columna < Tablero::COLUMNAS; ++columna) {
+            this->celdas[columna] = 0;
+        }
+        this->siguiente = nullptr;
+    }
 };
 
 #endif

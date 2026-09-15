@@ -15,8 +15,8 @@ public:
     ~Tablero();
 
     bool posicionValida(int fila, int columna);
-    int obtenerCelda(int fila, int columna);
-    bool establecerCelda(int fila, int columna, int valor);
+    int getCelda(int fila, int columna);
+    bool setCelda(int fila, int columna, int valor);
     int eliminarFilasCompletas();
     void vaciar();
     NodoFila* buscarFila(int fila);
