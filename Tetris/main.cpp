@@ -14,6 +14,7 @@ int main() {
     Tablero tablero;
     Pieza pieza(Pieza::T, 0, 3);
     bool piezaActiva = true;
+    bool finPartida = false;
     float tiempoCaida = 0.0f;
     const float intervaloNormal = 0.5f;
     const float intervaloRapido = 0.05f;
@@ -76,6 +77,14 @@ int main() {
             } else {
                 if (tablero.fijarPieza(pieza)) {
                     piezaActiva = false;
+                    tablero.eliminarFilasCompletas();
+                    // T temporal para probar el ciclo; luego saldra de la cola.
+                    pieza = Pieza(Pieza::T, 0, 3);
+                    if (tablero.puedeColocar(pieza)) {
+                        piezaActiva = true;
+                    } else {
+                        finPartida = true;
+                    }
                 }
                 tiempoCaida = 0.0f;
                 break;
@@ -110,6 +119,10 @@ int main() {
                            Tablero::FILAS * tamanoCelda + 1, GRAY);
         DrawText("TABLERO", 355, 80, 22, RAYWHITE);
         DrawText("10 columnas x 20 filas", 355, 115, 16, LIGHTGRAY);
+        if (finPartida) {
+            DrawText("FIN DE PARTIDA", 355, 180, 22, RED);
+            DrawText("La nueva pieza no cabe", 355, 215, 16, LIGHTGRAY);
+        }
         DrawText("ESC: salir", 355, 590, 18, LIGHTGRAY);
         DrawText("Flechas: mover izq/der", 355, 560, 16, LIGHTGRAY);
         DrawText("Arriba: rotar", 355, 530, 16, LIGHTGRAY);
