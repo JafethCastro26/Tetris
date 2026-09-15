@@ -1,5 +1,6 @@
 #include "ColaPiezas.h"
 #include "NodoPieza.h"
+#include <cstdlib>
 
 ColaPiezas::ColaPiezas() {
     this->frente = nullptr;
@@ -32,6 +33,25 @@ bool ColaPiezas::encolar(Pieza::Tipo tipo) {
     final = nuevo;
     ++cantidad;
     return true;
+}
+
+void ColaPiezas::agregarBolsa() {
+    Pieza::Tipo bolsa[7] = {
+        Pieza::I, Pieza::O, Pieza::T, Pieza::S,
+        Pieza::Z, Pieza::J, Pieza::L
+    };
+
+    // el for es decreciente porque la bolsa no puede tener repetidos
+    for (int i = 6; i > 0; --i) {
+        int elegida = std::rand() % (i + 1);
+        Pieza::Tipo temporal = bolsa[i];
+        bolsa[i] = bolsa[elegida];
+        bolsa[elegida] = temporal;
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        encolar(bolsa[i]);
+    }
 }
 
 bool ColaPiezas::desencolar(Pieza::Tipo& tipo) {

@@ -1,6 +1,9 @@
 #include "raylib.h"
 #include "Tablero.h"
 #include "Pieza.h"
+#include "ColaPiezas.h"
+#include <cstdlib>
+#include <ctime>
 
 int main() {
     const int tamanoCelda = 28;
@@ -12,9 +15,18 @@ int main() {
     };
 
     Tablero tablero;
-    Pieza pieza(Pieza::T, 0, 3);
-    bool piezaActiva = true;
-    bool finPartida = false;
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    ColaPiezas cola;
+    cola.agregarBolsa();
+
+    Pieza::Tipo tipo = Pieza::I;
+    Pieza pieza;
+    bool piezaActiva = false;
+    if (cola.desencolar(tipo)) {
+        pieza = Pieza(tipo, 0, 3);
+        piezaActiva = tablero.puedeColocar(pieza);
+    }
+    bool finPartida = !piezaActiva;
     float tiempoCaida = 0.0f;
     const float intervaloNormal = 0.5f;
     const float intervaloRapido = 0.05f;
@@ -78,13 +90,15 @@ int main() {
                 if (tablero.fijarPieza(pieza)) {
                     piezaActiva = false;
                     tablero.eliminarFilasCompletas();
-                    // T temporal para probar el ciclo; luego saldra de la cola.
-                    pieza = Pieza(Pieza::T, 0, 3);
-                    if (tablero.puedeColocar(pieza)) {
-                        piezaActiva = true;
-                    } else {
-                        finPartida = true;
+                    // Dejar al menos tres proximas despues de sacar una pieza.
+                    if (cola.getCantidad() < 4) {
+                        cola.agregarBolsa();
                     }
+                    if (cola.desencolar(tipo)) {
+                        pieza = Pieza(tipo, 0, 3);
+                        piezaActiva = tablero.puedeColocar(pieza);
+                    }
+                    finPartida = !piezaActiva;
                 }
                 tiempoCaida = 0.0f;
                 break;

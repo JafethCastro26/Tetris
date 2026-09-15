@@ -18,6 +18,7 @@ public:
     bool estaVacia();
     int getCantidad();
     bool encolar(Pieza::Tipo tipo);
+    void agregarBolsa();
     bool desencolar(Pieza::Tipo& tipo);
     bool getFrente(Pieza::Tipo& tipo);
     void vaciar();
