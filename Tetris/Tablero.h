@@ -18,6 +18,7 @@ public:
 
     bool posicionValida(int fila, int columna);
     bool puedeColocar(Pieza pieza);
+    bool fijarPieza(Pieza pieza);
     int getCelda(int fila, int columna);
     bool setCelda(int fila, int columna, int valor);
     int eliminarFilasCompletas();

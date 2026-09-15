@@ -39,6 +39,18 @@ bool Tablero::puedeColocar(Pieza pieza) {
     return true;
 }
 
+bool Tablero::fijarPieza(Pieza pieza) {
+    if (!puedeColocar(pieza)) {
+        return false;
+    }
+
+    for (int i = 0; i < Pieza::BLOQUES; ++i) {
+        nodoBloque bloque = pieza.getBloque(i);
+        setCelda(bloque.fila, bloque.columna, pieza.getTipo());
+    }
+    return true;
+}
+
 NodoFila* Tablero::buscarFila(int fila)  {
     NodoFila* actual = primera;
     for (int i = 0; i < fila && actual != nullptr; ++i)

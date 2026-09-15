@@ -13,6 +13,7 @@ int main() {
 
     Tablero tablero;
     Pieza pieza(Pieza::T, 0, 3);
+    bool piezaActiva = true;
     float tiempoCaida = 0.0f;
     const float intervaloNormal = 0.5f;
     const float intervaloRapido = 0.05f;
@@ -20,7 +21,7 @@ int main() {
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_LEFT)) {
+        if (piezaActiva && IsKeyPressed(KEY_LEFT)) {
             Pieza candidata = pieza;
             candidata.mover(0, -1);
             if (tablero.puedeColocar(candidata)) {
@@ -28,7 +29,7 @@ int main() {
             }
         }
 
-        if (IsKeyPressed(KEY_RIGHT)) {
+        if (piezaActiva && IsKeyPressed(KEY_RIGHT)) {
             Pieza candidata = pieza;
             candidata.mover(0, 1);
             if (tablero.puedeColocar(candidata)) {
@@ -36,7 +37,7 @@ int main() {
             }
         }
 
-        if (IsKeyPressed(KEY_UP)) {
+        if (piezaActiva && IsKeyPressed(KEY_UP)) {
             Pieza candidata = pieza;
             candidata.rotar();
             if (tablero.puedeColocar(candidata)) {
@@ -53,15 +54,29 @@ int main() {
         if (IsKeyPressed(KEY_DOWN) || IsKeyReleased(KEY_DOWN)) {
             tiempoCaida = 0.0f;
         }
-        tiempoCaida += GetFrameTime();
+        if (piezaActiva) {
+            tiempoCaida += GetFrameTime(); // cuanto tiempo duro el ultimo cuadro
+        }
+		
+		
+		/*
+		todo esto se da porque un frame no siempre dura lo mismo
+		por lo cual siempre se hacen acumulaciones de duracion 
+		en cada frame hazta q se alcanze el requerido
+		
+		
+		*/
 
-        while (tiempoCaida >= intervaloCaida) {
+        while (piezaActiva && tiempoCaida >= intervaloCaida) { // es cuanto tiempo debe esperar para q se mueva la pieza
             tiempoCaida -= intervaloCaida;
             Pieza candidata = pieza;
             candidata.mover(1, 0);
             if (tablero.puedeColocar(candidata)) {
                 pieza = candidata;
             } else {
+                if (tablero.fijarPieza(pieza)) {
+                    piezaActiva = false;
+                }
                 tiempoCaida = 0.0f;
                 break;
             }
@@ -80,12 +95,14 @@ int main() {
             }
         }
         // Dibujar la pieza activa sobre las celdas del tablero.
-        for (int i = 0; i < Pieza::BLOQUES; ++i) {
-            nodoBloque bloque = pieza.getBloque(i);
-            int x = origenX + bloque.columna * tamanoCelda;
-            int y = origenY + bloque.fila * tamanoCelda;
-            DrawRectangle(x, y, tamanoCelda - 1, tamanoCelda - 1,
-                          colores[pieza.getTipo()]);
+        if (piezaActiva) {
+            for (int i = 0; i < Pieza::BLOQUES; ++i) {
+                nodoBloque bloque = pieza.getBloque(i);
+                int x = origenX + bloque.columna * tamanoCelda;
+                int y = origenY + bloque.fila * tamanoCelda;
+                DrawRectangle(x, y, tamanoCelda - 1, tamanoCelda - 1,
+                              colores[pieza.getTipo()]);
+            }
         }
 
         DrawRectangleLines(origenX - 1, origenY - 1,
