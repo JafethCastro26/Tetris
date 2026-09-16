@@ -105,7 +105,7 @@ void actualizarCaida(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
 }
 
 void dibujarJuego(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& pieza,
-                  bool piezaActiva, bool finPartida, int puntaje) {
+                  bool piezaActiva, bool finPartida, int puntaje, bool enPausa) {
     const int tamanoCelda = 28;
     const int origenX = 40;
     const int origenY = 70;
@@ -181,9 +181,13 @@ void dibujarJuego(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& pie
     if (finPartida) {
         DrawText("FIN DE PARTIDA", 355, 24, 22, RED);
         DrawText("La nueva pieza no cabe", 355, 50, 16, LIGHTGRAY);
+    } else if (enPausa) {
+        DrawText("PAUSA", 355, 24, 22, YELLOW);
+        DrawText("P: continuar", 355, 50, 16, LIGHTGRAY);
     }
     DrawText("ESC: salir", 355, 590, 18, LIGHTGRAY);
     DrawText("C: guardar / intercambiar", 355, 620, 16, LIGHTGRAY);
+    DrawText("P: pausar / continuar", 355, 650, 16, LIGHTGRAY);
     DrawText("Flechas: mover izq/der", 355, 560, 16, LIGHTGRAY);
     DrawText("Arriba: rotar", 355, 530, 16, LIGHTGRAY);
     DrawText("Mantener abajo: acelerar", 355, 500, 16, LIGHTGRAY);
@@ -207,22 +211,29 @@ int main() {
         piezaActiva = tablero.puedeColocar(pieza);
     }
     bool finPartida = !piezaActiva;
+    bool enPausa = false;
     float tiempoCaida = 0.0f;
     InitWindow(620, 680, "Tetris - Tablero");
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
-        if (piezaActiva && !holdUsado && IsKeyPressed(KEY_C)) {
-            piezaActiva = cambiarHold(tablero, cola, hold, pieza);
-            finPartida = !piezaActiva;
-            holdUsado = true;
+        if (!finPartida && IsKeyPressed(KEY_P)) {
+            enPausa = !enPausa;
+		
             tiempoCaida = 0.0f;
-        } else {
-            procesarControles(tablero, pieza, piezaActiva);
-            actualizarCaida(tablero, cola, pieza, piezaActiva, finPartida,
-                            tiempoCaida, holdUsado, puntaje);
+        } else if (!enPausa && !finPartida) {
+            if (piezaActiva && !holdUsado && IsKeyPressed(KEY_C)) {
+                piezaActiva = cambiarHold(tablero, cola, hold, pieza);
+                finPartida = !piezaActiva;
+                holdUsado = true;
+                tiempoCaida = 0.0f;
+            } else {
+                procesarControles(tablero, pieza, piezaActiva);
+                actualizarCaida(tablero, cola, pieza, piezaActiva, finPartida,
+                                tiempoCaida, holdUsado, puntaje);
+            }
         }
-        dibujarJuego(tablero, cola, hold, pieza, piezaActiva, finPartida, puntaje);
+        dibujarJuego(tablero, cola, hold, pieza, piezaActiva, finPartida, puntaje, enPausa);
     }
     CloseWindow();
     return 0;
