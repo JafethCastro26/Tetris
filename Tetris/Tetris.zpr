@@ -33,6 +33,12 @@ open=true
 path=ColaPiezas.cpp
 cursor=0:0
 open=true
+[source]
+path=PilaHold.cpp
+open=false
+[header]
+path=PilaHold.h
+open=false
 [header]
 path=NodoFila.h
 cursor=11:0

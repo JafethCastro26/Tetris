@@ -2,6 +2,7 @@
 #include "Tablero.h"
 #include "Pieza.h"
 #include "ColaPiezas.h"
+#include "PilaHold.h"
 #include <cstdlib>
 #include <ctime>
 
@@ -31,8 +32,27 @@ void procesarControles(Tablero& tablero, Pieza& pieza, bool piezaActiva) {
     }
 }
 
+bool cambiarHold(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& pieza) {
+    Pieza::Tipo tipoEntrante = Pieza::I;
+    if (hold.estaVacia()) {
+        if (cola.getCantidad() < 4) {
+            cola.agregarBolsa();
+        }
+        if (!cola.desencolar(tipoEntrante)) {
+            return false;
+        }
+    } else {
+        hold.desapilar(tipoEntrante);
+    }
+
+    hold.apilar(pieza.getTipo());
+    pieza = Pieza(tipoEntrante, 0, 3);
+    return tablero.puedeColocar(pieza);
+}
+
 void actualizarCaida(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
-                     bool& piezaActiva, bool& finPartida, float& tiempoCaida) {
+                     bool& piezaActiva, bool& finPartida, float& tiempoCaida,
+                     bool& holdUsado) {
     const float intervaloNormal = 0.5f;
     const float intervaloRapido = 0.05f;
     float intervaloCaida = intervaloNormal;
@@ -62,6 +82,7 @@ void actualizarCaida(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
             pieza = candidata;
         } else {
             if (tablero.fijarPieza(pieza)) {
+                holdUsado = false;
                 piezaActiva = false;
                 tablero.eliminarFilasCompletas();
                 // deja al menos tres proximas despues de sacar una pieza.
@@ -144,6 +165,7 @@ void dibujarJuego(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
         DrawText("La nueva pieza no cabe", 355, 215, 16, LIGHTGRAY);
     }
     DrawText("ESC: salir", 355, 590, 18, LIGHTGRAY);
+    DrawText("C: guardar / intercambiar", 355, 620, 16, LIGHTGRAY);
     DrawText("Flechas: mover izq/der", 355, 560, 16, LIGHTGRAY);
     DrawText("Arriba: rotar", 355, 530, 16, LIGHTGRAY);
     DrawText("Mantener abajo: acelerar", 355, 500, 16, LIGHTGRAY);
@@ -154,6 +176,8 @@ int main() {
     Tablero tablero;
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     ColaPiezas cola;
+    PilaHold hold;
+    bool holdUsado = false;
     cola.agregarBolsa();
 
     Pieza::Tipo tipo = Pieza::I;
@@ -169,8 +193,16 @@ int main() {
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
-        procesarControles(tablero, pieza, piezaActiva);
-        actualizarCaida(tablero, cola, pieza, piezaActiva, finPartida, tiempoCaida);
+        if (piezaActiva && !holdUsado && IsKeyPressed(KEY_C)) {
+            piezaActiva = cambiarHold(tablero, cola, hold, pieza);
+            finPartida = !piezaActiva;
+            holdUsado = true;
+            tiempoCaida = 0.0f;
+        } else {
+            procesarControles(tablero, pieza, piezaActiva);
+            actualizarCaida(tablero, cola, pieza, piezaActiva, finPartida,
+                            tiempoCaida, holdUsado);
+        }
         dibujarJuego(tablero, cola, pieza, piezaActiva, finPartida);
     }
     CloseWindow();
