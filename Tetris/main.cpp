@@ -102,12 +102,14 @@ void actualizarCaida(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
     }
 }
 
-void dibujarJuego(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
+void dibujarJuego(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& pieza,
                   bool piezaActiva, bool finPartida) {
     const int tamanoCelda = 28;
     const int origenX = 40;
     const int origenY = 70;
     const int tamanoVista = 20;
+    const int holdX = 375;
+    const int holdY = 180;
     const int proximasX = 375;
     const int proximasY = 270;
     const int separacionProximas = 70;
@@ -144,6 +146,20 @@ void dibujarJuego(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
                        Tablero::FILAS * tamanoCelda + 1, GRAY);
     DrawText("TABLERO", 355, 80, 22, RAYWHITE);
     DrawText("10 columnas x 20 filas", 355, 115, 16, LIGHTGRAY);
+    DrawText("HOLD", 355, 145, 22, RAYWHITE);
+    Pieza::Tipo tipoGuardado = Pieza::I;
+    if (hold.getTope(tipoGuardado)) {
+        Pieza guardada(tipoGuardado, 0, 0);
+        for (int i = 0; i < Pieza::BLOQUES; ++i) {
+            nodoBloque bloque = guardada.getBloque(i);
+            int x = holdX + bloque.columna * tamanoVista;
+            int y = holdY + bloque.fila * tamanoVista;
+            DrawRectangle(x, y, tamanoVista - 1, tamanoVista - 1,
+                          colores[tipoGuardado]);
+        }
+    } else {
+        DrawText("Vacio", holdX, holdY, 16, LIGHTGRAY);
+    }
     DrawText("PROXIMAS", 355, 240, 22, RAYWHITE);
     for (int indice = 0; indice < 3; ++indice) {
         Pieza::Tipo tipoProxima = Pieza::I;
@@ -161,8 +177,8 @@ void dibujarJuego(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
         }
     }
     if (finPartida) {
-        DrawText("FIN DE PARTIDA", 355, 180, 22, RED);
-        DrawText("La nueva pieza no cabe", 355, 215, 16, LIGHTGRAY);
+        DrawText("FIN DE PARTIDA", 355, 24, 22, RED);
+        DrawText("La nueva pieza no cabe", 355, 50, 16, LIGHTGRAY);
     }
     DrawText("ESC: salir", 355, 590, 18, LIGHTGRAY);
     DrawText("C: guardar / intercambiar", 355, 620, 16, LIGHTGRAY);
@@ -203,7 +219,7 @@ int main() {
             actualizarCaida(tablero, cola, pieza, piezaActiva, finPartida,
                             tiempoCaida, holdUsado);
         }
-        dibujarJuego(tablero, cola, pieza, piezaActiva, finPartida);
+        dibujarJuego(tablero, cola, hold, pieza, piezaActiva, finPartida);
     }
     CloseWindow();
     return 0;
