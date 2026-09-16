@@ -21,6 +21,7 @@ public:
     void agregarBolsa();
     bool desencolar(Pieza::Tipo& tipo);
     bool getFrente(Pieza::Tipo& tipo);
+    bool getTipoEn(int indice, Pieza::Tipo& tipo);
     void vaciar();
 };
 

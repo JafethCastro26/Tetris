@@ -77,6 +77,20 @@ bool ColaPiezas::getFrente(Pieza::Tipo& tipo) {
     return true;
 }
 
+bool ColaPiezas::getTipoEn(int indice, Pieza::Tipo& tipo) {
+    if (indice < 0 || indice >= cantidad) {
+        return false;
+    }
+
+    NodoPieza* actual = frente;
+    for (int i = 0; i < indice; ++i) {
+        actual = actual->siguiente;
+    }
+
+    tipo = actual->tipo;
+    return true;
+}
+
 void ColaPiezas::vaciar() {
     while (frente != nullptr) {
         NodoPieza* aBorrar = frente;
