@@ -52,7 +52,7 @@ bool cambiarHold(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& piez
 
 void actualizarCaida(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
                      bool& piezaActiva, bool& finPartida, float& tiempoCaida,
-                     bool& holdUsado) {
+                     bool& holdUsado, int& puntaje) {
     const float intervaloNormal = 0.5f;
     const float intervaloRapido = 0.05f;
     float intervaloCaida = intervaloNormal;
@@ -84,7 +84,9 @@ void actualizarCaida(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
             if (tablero.fijarPieza(pieza)) {
                 holdUsado = false;
                 piezaActiva = false;
-                tablero.eliminarFilasCompletas();
+                int lineasEliminadas = tablero.eliminarFilasCompletas();
+                // Cada linea eliminada suma 100 puntos.
+                puntaje += lineasEliminadas * 100;
                 // deja al menos tres proximas despues de sacar una pieza.
                 if (cola.getCantidad() < 4) {
                     cola.agregarBolsa();
@@ -103,7 +105,7 @@ void actualizarCaida(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
 }
 
 void dibujarJuego(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& pieza,
-                  bool piezaActiva, bool finPartida) {
+                  bool piezaActiva, bool finPartida, int puntaje) {
     const int tamanoCelda = 28;
     const int origenX = 40;
     const int origenY = 70;
@@ -144,7 +146,7 @@ void dibujarJuego(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& pie
     DrawRectangleLines(origenX - 1, origenY - 1,
                        Tablero::COLUMNAS * tamanoCelda + 1,
                        Tablero::FILAS * tamanoCelda + 1, GRAY);
-    DrawText("TABLERO", 355, 80, 22, RAYWHITE);
+    DrawText(TextFormat("Puntaje: %d", puntaje), 355, 80, 22, RAYWHITE);
     DrawText("10 columnas x 20 filas", 355, 115, 16, LIGHTGRAY);
     DrawText("HOLD", 355, 145, 22, RAYWHITE);
     Pieza::Tipo tipoGuardado = Pieza::I;
@@ -194,6 +196,7 @@ int main() {
     ColaPiezas cola;
     PilaHold hold;
     bool holdUsado = false;
+    int puntaje = 0;
     cola.agregarBolsa();
 
     Pieza::Tipo tipo = Pieza::I;
@@ -217,9 +220,9 @@ int main() {
         } else {
             procesarControles(tablero, pieza, piezaActiva);
             actualizarCaida(tablero, cola, pieza, piezaActiva, finPartida,
-                            tiempoCaida, holdUsado);
+                            tiempoCaida, holdUsado, puntaje);
         }
-        dibujarJuego(tablero, cola, hold, pieza, piezaActiva, finPartida);
+        dibujarJuego(tablero, cola, hold, pieza, piezaActiva, finPartida, puntaje);
     }
     CloseWindow();
     return 0;
