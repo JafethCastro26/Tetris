@@ -105,7 +105,8 @@ void actualizarCaida(Tablero& tablero, ColaPiezas& cola, Pieza& pieza,
 }
 
 void dibujarJuego(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& pieza,
-                  bool piezaActiva, bool finPartida, int puntaje, bool enPausa) {
+                  bool piezaActiva, bool finPartida, int puntaje, bool enPausa,
+                  float tiempoJuego) {
     const int tamanoCelda = 28;
     const int origenX = 40;
     const int origenY = 70;
@@ -147,7 +148,7 @@ void dibujarJuego(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& pie
                        Tablero::COLUMNAS * tamanoCelda + 1,
                        Tablero::FILAS * tamanoCelda + 1, GRAY);
     DrawText(TextFormat("Puntaje: %d", puntaje), 355, 80, 22, RAYWHITE);
-    DrawText("10 columnas x 20 filas", 355, 115, 16, LIGHTGRAY);
+    DrawText(TextFormat("Tiempo: %.1f s", tiempoJuego), 355, 115, 16, LIGHTGRAY);
     DrawText("HOLD", 355, 145, 22, RAYWHITE);
     Pieza::Tipo tipoGuardado = Pieza::I;
     if (hold.getTope(tipoGuardado)) {
@@ -213,6 +214,7 @@ int main() {
     bool finPartida = !piezaActiva;
     bool enPausa = false;
     float tiempoCaida = 0.0f;
+    float tiempoJuego = 0.0f;
     InitWindow(620, 680, "Tetris - Tablero");
     SetTargetFPS(60);
 
@@ -222,6 +224,7 @@ int main() {
 		
             tiempoCaida = 0.0f;
         } else if (!enPausa && !finPartida) {
+            tiempoJuego += GetFrameTime();
             if (piezaActiva && !holdUsado && IsKeyPressed(KEY_C)) {
                 piezaActiva = cambiarHold(tablero, cola, hold, pieza);
                 finPartida = !piezaActiva;
@@ -233,7 +236,8 @@ int main() {
                                 tiempoCaida, holdUsado, puntaje);
             }
         }
-        dibujarJuego(tablero, cola, hold, pieza, piezaActiva, finPartida, puntaje, enPausa);
+        dibujarJuego(tablero, cola, hold, pieza, piezaActiva, finPartida,
+                     puntaje, enPausa, tiempoJuego);
     }
     CloseWindow();
     return 0;
