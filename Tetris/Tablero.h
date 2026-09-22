@@ -14,7 +14,10 @@ public:
     static const int COLUMNAS = 10;
 
     Tablero();
+    Tablero(const Tablero& otro);
     ~Tablero();
+
+    Tablero& operator=(const Tablero& otro);
 
     bool posicionValida(int fila, int columna);
     bool puedeColocar(Pieza pieza);

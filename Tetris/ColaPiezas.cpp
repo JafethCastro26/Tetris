@@ -8,8 +8,34 @@ ColaPiezas::ColaPiezas() {
     this->cantidad = 0;
 }
 
+ColaPiezas::ColaPiezas(const ColaPiezas& otra) {
+    this->frente = nullptr;
+    this->final = nullptr;
+    this->cantidad = 0;
+
+    NodoPieza* actual = otra.frente;
+    while (actual != nullptr) {
+        encolar(actual->tipo);
+        actual = actual->siguiente;
+    }
+}
+
 ColaPiezas::~ColaPiezas() {
     vaciar();
+}
+
+ColaPiezas& ColaPiezas::operator=(const ColaPiezas& otra) {
+    if (this == &otra) {
+        return *this;
+    }
+
+    vaciar();
+    NodoPieza* actual = otra.frente;
+    while (actual != nullptr) {
+        encolar(actual->tipo);
+        actual = actual->siguiente;
+    }
+    return *this;
 }
 
 bool ColaPiezas::estaVacia() {

@@ -10,8 +10,56 @@ Tablero::Tablero() {
         }
 }
 
+Tablero::Tablero(const Tablero& otro) {
+    this->primera = nullptr;
+    NodoFila* ultima = nullptr;
+    NodoFila* actual = otro.primera;
+
+    while (actual != nullptr) {
+        NodoFila* nueva = new NodoFila;
+        for (int columna = 0; columna < COLUMNAS; ++columna) {
+            nueva->celdas[columna] = actual->celdas[columna];
+        }
+
+        if (this->primera == nullptr) {
+            this->primera = nueva;
+        } else {
+            ultima->siguiente = nueva;
+        }
+        ultima = nueva;
+        actual = actual->siguiente;
+    }
+}
+
 Tablero::~Tablero() {
     liberar();
+}
+
+Tablero& Tablero::operator=(const Tablero& otro) {
+    if (this == &otro) {
+        return *this;
+    }
+
+    liberar();
+    NodoFila* ultima = nullptr;
+    NodoFila* actual = otro.primera;
+
+    while (actual != nullptr) {
+        NodoFila* nueva = new NodoFila;
+        for (int columna = 0; columna < COLUMNAS; ++columna) {
+            nueva->celdas[columna] = actual->celdas[columna];
+        }
+
+        if (primera == nullptr) {
+            primera = nueva;
+        } else {
+            ultima->siguiente = nueva;
+        }
+        ultima = nueva;
+        actual = actual->siguiente;
+    }
+
+    return *this;
 }
 
 void Tablero::liberar() {

@@ -13,7 +13,10 @@ private:
 
 public:
     ColaPiezas();
+    ColaPiezas(const ColaPiezas& otra);
     ~ColaPiezas();
+
+    ColaPiezas& operator=(const ColaPiezas& otra);
 
     bool estaVacia();
     int getCantidad();
