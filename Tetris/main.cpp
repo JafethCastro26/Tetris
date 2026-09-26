@@ -277,7 +277,7 @@ void dibujarTablaPuntajes(TablaPuntajes& tabla) {
     EndDrawing();
 }
 
-void procesarInicio(std::string& nombreJugador, bool& enInicio) {
+void procesarInicio(std::string& nombreJugador, bool& enInicio) { // lee el nombre del jugador para persistirlo despues
     int caracter = GetCharPressed();
     while (caracter > 0) {
         if (caracter >= 32 && caracter <= 125 && nombreJugador.length() < 16) {
@@ -310,26 +310,27 @@ void procesarReplay(listaHistorial& historial, Tablero& tablero,
                     bool& piezaActiva, bool& finPartida, bool& enPausa,
                     bool& holdUsado, float& intervaloNormal,
                     bool& doblePuntaje, bool& enReplay, float& tiempoReplay) {
-    if (!enReplay) return;
+    if (!enReplay) return; 
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) &&
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && // salir del replay
         CheckCollisionPointRec(GetMousePosition(), Rectangle{355, 550, 220, 35})) {
         enReplay = false;
         finPartida = true;
         tiempoReplay = 0.0f;
-    } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) &&
+    } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && // retroceder replay
                CheckCollisionPointRec(GetMousePosition(), Rectangle{355, 500, 100, 35})) {
         historial.retrocederReplay(tablero, cola, hold, pieza, eventos,
                                    puntaje, tiempoJuego, piezaActiva,
                                    finPartida, enPausa, holdUsado,
                                    intervaloNormal, doblePuntaje);
-    } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) &&
+    } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && // avanzar replay
                CheckCollisionPointRec(GetMousePosition(), Rectangle{470, 500, 105, 35})) {
         historial.avanzarReplay(tablero, cola, hold, pieza, eventos,
                                 puntaje, tiempoJuego, piezaActiva,
                                 finPartida, enPausa, holdUsado,
                                 intervaloNormal, doblePuntaje);
-    } else {
+		
+    } else { // avanzado normal del replay
         tiempoReplay += GetFrameTime();
         if (tiempoReplay >= 0.15f) {
             historial.avanzarReplay(tablero, cola, hold, pieza, eventos,
@@ -341,7 +342,8 @@ void procesarReplay(listaHistorial& historial, Tablero& tablero,
     }
 }
 
-bool procesarTabla(bool& enTabla, bool enReplay) {
+bool procesarTabla(bool& enTabla, bool enReplay) { // procesa el boton de volver en la tabla
+	
     if (enReplay || !enTabla || !IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return false;
     if (CheckCollisionPointRec(GetMousePosition(), Rectangle{200, 570, 220, 40})) {
         enTabla = false;
@@ -413,13 +415,14 @@ void procesarPartida(Tablero& tablero, ColaPiezas& cola, PilaHold& hold,
                               holdUsado, intervaloNormal, doblePuntaje);
 			
         } else { // si no se uso el hold se procesan los demas movimientos del juego
-            TipoMovimiento movimiento = procesarControles(tablero, pieza, piezaActiva);
-            if (movimiento != INICIO) {
+            TipoMovimiento movimiento = procesarControles(tablero, pieza, piezaActiva); // revisa la ultima accion realizada
+			
+            if (movimiento != INICIO) { // si no es la de inicio se guarda
                 historial.guardar(movimiento, tablero, cola, hold, pieza, eventos,
                                   puntaje, tiempoJuego, piezaActiva, finPartida,
                                   enPausa, holdUsado, intervaloNormal, doblePuntaje);
             }
-            movimiento = actualizarCaida(tablero, cola, pieza, piezaActiva,
+            movimiento = actualizarCaida(tablero, cola, pieza, piezaActiva, // se procesa la caida
                                          finPartida, tiempoCaida, holdUsado,
                                          puntaje, intervaloNormal, doblePuntaje);
             if (movimiento != INICIO) {

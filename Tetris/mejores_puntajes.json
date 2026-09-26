@@ -1,7 +1,15 @@
 [
     {
+        "nombre": "niggaman",
+        "puntaje": 800
+    },
+    {
         "nombre": "jafeth",
         "puntaje": 200
+    },
+    {
+        "nombre": "jorge",
+        "puntaje": 100
     },
     {
         "nombre": "stacy",
