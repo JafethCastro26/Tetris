@@ -38,6 +38,16 @@ bool TablaPuntajes::cargar(const std::string& nombreArchivo) {
 
 bool TablaPuntajes::insertar(const std::string& nombre, int puntaje) {
     if (nombre.empty() || puntaje < 0) return false;
+
+    for (int i = 0; i < cantidad; ++i) {
+        if (registros[i].nombre == nombre) {
+            if (puntaje <= registros[i].puntaje) return false;
+            registros[i].puntaje = puntaje;
+            quickSort(0, cantidad - 1);
+            return true;
+        }
+    }
+
     if (cantidad < MAXIMO) {
         registros[cantidad].nombre = nombre;
         registros[cantidad].puntaje = puntaje;

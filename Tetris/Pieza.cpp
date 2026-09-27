@@ -1,8 +1,6 @@
 #include "Pieza.h"
 
-// Orientaciones precalculadas: cada paso gira en sentido horario.
-// I utiliza un espacio local de 4x4; las otras, uno de 3x3.
-// O conserva sus bloques en las cuatro orientaciones.
+// orientaciones precalculadas
 const nodoBloque Pieza::formas[7][ORIENTACIONES][BLOQUES] = {
     { // I
         {{1, 0}, {1, 1}, {1, 2}, {1, 3}},

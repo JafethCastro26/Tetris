@@ -47,10 +47,9 @@ TipoMovimiento procesarControles(Tablero& tablero, Pieza& pieza,
 
 bool cambiarHold(Tablero& tablero, ColaPiezas& cola, PilaHold& hold, Pieza& pieza) {
     Pieza::Tipo tipoEntrante = Pieza::I;
-    if (hold.estaVacia()) {
-        if (cola.getCantidad() < 4) {
+    if (hold.estaVacia() && cola.getCantidad() < 4) {
             cola.agregarBolsa();
-        }
+        
         if (!cola.desencolar(tipoEntrante)) {
             return false;
         }
